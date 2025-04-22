@@ -7,8 +7,10 @@ import (
 
 func main() {
 	naloge.NalogeIzPrintanja()
-	fmt.Println("\n\n")
+	fmt.Printf("\n\n")
 	naloge.NalogeIzConditionals()
-	fmt.Println("\n\n")
+	fmt.Printf("\n\n")
 	naloge.NalogeIzLoops()
+	fmt.Printf("\n\n")
+	naloge.NalogeIzFunctions()
 }
