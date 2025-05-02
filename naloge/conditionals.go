@@ -7,7 +7,7 @@ func NalogeIzConditionals() {
 	// 1. Check if the boolean variable x is true.
 	// If it is, print "x is true".
 	x := true
-	if x == true {
+	if x {
 		fmt.Println("1. x je true")
 	} else {
 		fmt.Println("q. x je false")

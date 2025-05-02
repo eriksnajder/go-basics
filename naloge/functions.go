@@ -1,6 +1,8 @@
 package naloge
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func NalogeIzFunctions() {
 	// 1 Write a function `Factorial` that calculates the factorial of a non‑negative integer using a `for` loop and an `if` to handle zero.
@@ -237,4 +239,165 @@ func AverageSlice(nums []int) (int, error) {
 	}
 
 	return number / len(nums), nil
+}
+
+// 7 Write a function `CountEven` that counts how many even numbers are in a slice. Loop through each element and use `if num%2 == 0` to increment a counter.
+// nums []int
+
+func CountEven(nums []int) (int, error) {
+	if nums == nil {
+		return 0, fmt.Errorf("input is nil slice")
+	}
+
+	if len(nums) == 0 {
+		return 0, fmt.Errorf("input is empty")
+	}
+
+	number := 0
+
+	for _, i := range nums {
+		if i%2 == 0 {
+			number += 1
+		}
+	}
+	return number, nil
+}
+
+// 8 Write a function `CountOdd` that counts how many odd numbers are in a slice. Loop and use `if num%2 != 0` to increment.
+// nums []int
+func CountOdd(nums []int) (int, error) {
+	if nums == nil {
+		return 0, fmt.Errorf("input is nil slice")
+	}
+	if len(nums) == 0 {
+		return 0, fmt.Errorf("input is empty")
+	}
+
+	number := 0
+
+	for _, i := range nums {
+		if i%2 != 0 {
+			number += 1
+		}
+	}
+	return number, nil
+}
+
+// 9 Write a function `ReverseString` that returns a new string which is the reverse of the input. Use a loop from the end index down to zero.
+// s string
+func ReverseString(word string) string {
+	if word == "" {
+		return ""
+	}
+	newWord := ""
+
+	for i := len(word) - 1; i >= 0; i-- {
+		newWord += string(word[i])
+	}
+
+	return newWord
+}
+
+// 10 Write a function `IsPalindrome` that checks if a string reads the same forward and backward. Loop and compare characters at symmetrical positions.
+// s string
+func IsPalindrome(word string) bool {
+	if word == "" {
+		return false
+	}
+	newWord := ""
+	for i := len(word) - 1; i >= 0; i-- {
+		newWord += string(word[i])
+	}
+	return newWord == word
+}
+
+// 11 Write a function `IndexOf` that finds the index of a target integer in a slice, returning -1 if not found. Loop with index and value and use an `if` check.
+// nums []int
+// target int
+
+func IndexOf(nums []int, target int) (int, error) {
+	if nums == nil {
+		return 0, fmt.Errorf("input is nil slice")
+	}
+	if len(nums) == 0 {
+		return 0, fmt.Errorf("input is empty")
+	}
+
+	for index, item := range nums {
+		if target == item {
+			return index, nil
+		}
+	}
+	return -1, nil
+}
+
+// 12 Write a function `FilterEven` that returns a new slice containing only the even numbers from the input. Loop, test `num%2 == 0`, and append matches.
+// nums []int
+
+func FilterEven(nums []int) ([]int, error) {
+	if nums == nil {
+		return nil, fmt.Errorf("input is nil slice")
+	}
+	if len(nums) == 0 {
+		return nil, fmt.Errorf("input is empty")
+	}
+	newNums := []int{}
+	for _, num := range nums {
+		if num%2 == 0 {
+			newNums = append(newNums, num)
+		}
+
+	}
+	return newNums, nil
+}
+
+// 13 Write a function `CountVowels` that counts how many vowels (`a, e, i, o, u`) are in a string. Loop over runes and use a conditional with multiple `||` tests.
+// s string
+
+func IsVowel(s rune) bool {
+	vowels := []rune{'a', 'e', 'i', 'o', 'u'}
+	for _, vowel := range vowels {
+		if s == vowel {
+			return true
+		}
+	}
+	return false
+}
+
+func CountVowels(s string) int {
+	count := 0
+	for _, letter := range s {
+		if IsVowel(letter) {
+			count += 1
+		}
+	}
+	return count
+
+}
+
+// 14 Write a function `CountConsonants` that counts consonants (letters that are not vowels) in a string. Loop and use `if` to skip non-letters and vowels.
+// s string
+
+func CountConsonants(s string) int {
+	count := 0
+	for _, letter := range s {
+		if !IsVowel(letter) {
+			count += 1
+		}
+	}
+	return count
+}
+
+// 15 Write a function `IsLeapYear` that determines whether a given year is a leap year. Use `if` to check divisibility by 4, 100, and 400 in the correct order.
+// year int
+
+func IsLeapYear(year int) bool {
+	if year%4 == 0 {
+		if year%100 != 0 {
+			return true
+		} else if year%400 == 0 {
+			return true
+		}
+	}
+	return false
 }
