@@ -572,3 +572,176 @@ func TestIsLeapYear(t *testing.T) {
 		})
 	}
 }
+
+func TestFibonacci(t *testing.T) {
+	tests := map[string]struct {
+		input       int
+		expected    []int
+		errExpected error
+	}{
+		"invalid path": {
+			input:       0,
+			expected:    nil,
+			errExpected: fmt.Errorf("invalid n"),
+		},
+		"zero path": {
+			input:    1,
+			expected: []int{0},
+		},
+		"happy path": {
+			input:    5,
+			expected: []int{0, 1, 1, 2, 3},
+		},
+		"happy path 2": {
+			input:    10,
+			expected: []int{0, 1, 1, 2, 3, 5, 8, 13, 21, 34},
+		},
+	}
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := Fibonacci(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestSumDigits(t *testing.T) {
+	tests := map[string]struct {
+		input       int
+		expected    int
+		errExpected error
+	}{
+		"invalid path": {
+			input:       -3,
+			expected:    -1,
+			errExpected: fmt.Errorf("non-negative numbers only"),
+		},
+		"zero path": {
+			input:    0,
+			expected: 0,
+		},
+		"single path": {
+			input:    5,
+			expected: 5,
+		},
+		"happy path": {
+			input:    51,
+			expected: 6,
+		},
+		"happy path 2": {
+			input:    8598,
+			expected: 30,
+		},
+	}
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := SumDigits(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestIsArmstrong(t *testing.T) {
+	tests := map[string]struct {
+		input       int
+		expected    bool
+		errExpected error
+	}{
+		"invalid path": {
+			input:       -3,
+			expected:    false,
+			errExpected: fmt.Errorf("non-negative numbers only"),
+		},
+		"zero path": {
+			input:    0,
+			expected: true,
+		},
+		"single path": {
+			input:    5,
+			expected: true,
+		},
+		"unhappy path": {
+			input:    51,
+			expected: false,
+		},
+		"happy path 2": {
+			input:    1634,
+			expected: true,
+		},
+	}
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := IsArmstrong(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestMultiplicationTable(t *testing.T) {
+	tests := map[string]struct {
+		inputNumber int
+		inputX      int
+		expected    []int
+		errExpected error
+	}{
+		"happy path": {
+			inputNumber: 4,
+			inputX:      4,
+			expected:    []int{4, 8, 12, 16},
+		},
+		"happy path.2": {
+			inputNumber: 15,
+			inputX:      8,
+			expected:    []int{15, 30, 45, 60, 75, 90, 105, 120},
+		},
+		"negative path": {
+			inputNumber: -3,
+			inputX:      5,
+			expected:    []int{-3, -6, -9, -12, -15},
+		},
+		"invalid x": {
+			inputNumber: 5,
+			inputX:      -3,
+			expected:    nil,
+			errExpected: fmt.Errorf("invalid x-"),
+		},
+	}
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := MultiplicationTable(test.inputNumber, test.inputX)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}

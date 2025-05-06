@@ -2,6 +2,7 @@ package naloge
 
 import (
 	"fmt"
+	"math"
 )
 
 func NalogeIzFunctions() {
@@ -400,4 +401,101 @@ func IsLeapYear(year int) bool {
 		}
 	}
 	return false
+}
+
+// 16 Write a function `Fibonacci` that generates and returns the first `n` Fibonacci numbers in a slice. Use a `for` loop and handle `n` less than 2 with a conditional.
+// n int
+
+func Fibonacci(n int) ([]int, error) {
+	if n <= 0 {
+		return nil, fmt.Errorf("invalid n")
+	}
+
+	if n == 1 {
+		return []int{0}, nil
+	}
+
+	out := []int{0, 1}
+
+	x := 0
+	y := 1
+	z := 0
+
+	for i := 3; i <= n; i++ {
+		z = x + y
+		x = y
+		y = z
+		out = append(out, z)
+	}
+	return out, nil
+}
+
+// 17 Write a function `SumDigits` that computes the sum of digits of a non‑negative integer. Use a loop dividing by 10 and adding `n % 10` each iteration.
+// n int
+
+func SumDigits(num int) (int, error) {
+	if num < 0 {
+		return -1, fmt.Errorf("non-negative numbers only")
+	}
+
+	if num < 10 {
+		return num, nil
+	}
+
+	sum := 0
+	for {
+		currentDigit := num % 10
+		num /= 10
+		sum += currentDigit
+		if num == 0 {
+			break
+		}
+
+	}
+	return sum, nil
+}
+
+// 18 Write a function `IsArmstrong` that checks whether a number is an Armstrong number (sum of its own digits each raised to the power of the number of digits). Loop to compute digit powers and compare.
+// n int
+
+func IsArmstrong(num int) (bool, error) {
+	if num < 0 {
+		return false, fmt.Errorf("non-negative numbers only")
+	}
+
+	if num < 10 {
+		return true, nil
+	}
+
+	stevke := []int{}
+	original := num
+
+	for num != 0 {
+		stevke = append(stevke, num%10)
+		num /= 10
+	}
+
+	sum := 0
+
+	for _, stevka := range stevke {
+		sum += int(math.Pow(float64(stevka), float64(len(stevke))))
+	}
+
+	return sum == original, nil
+
+}
+
+// 19 Write a function `MultiplicationTable` that returns a slice of ints representing `n × 1` through `n × 10`. Use a loop from 1 to 10 and multiply.
+// n int
+
+func MultiplicationTable(number int, x int) ([]int, error) {
+	intSlices := []int{}
+	if x < 0 {
+		return nil, fmt.Errorf("invalid x")
+	}
+	for i := 1; i <= x; i++ {
+		intSlices = append(intSlices, number*i)
+	}
+	return intSlices, nil
+
 }
