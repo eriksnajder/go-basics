@@ -3,6 +3,7 @@ package naloge
 import (
 	"fmt"
 	"math"
+	"strings"
 )
 
 func NalogeIzFunctions() {
@@ -498,4 +499,113 @@ func MultiplicationTable(number int, x int) ([]int, error) {
 	}
 	return intSlices, nil
 
+}
+
+// 20 Write a function `CountSubstring` that counts how many times `substr` appears in `s`. Loop stepping one rune at a time and use `if` with `strings.HasPrefix`.
+// s string
+// substr string
+
+func HasSubstring(s, substr string) bool {
+	for i := 0; i < len(s)-1; i++ {
+		if strings.HasPrefix(s[i:], substr) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func CountSubstring(s, substr string) int {
+	counter := 0
+	for i := 0; i < len(s)-1; i++ {
+		if strings.HasPrefix(s[i:], substr) {
+			counter++
+		}
+	}
+
+	return counter
+}
+
+// 21 Write a function `GCD` that computes the greatest common divisor of `a` and `b` using the Euclidean algorithm. Loop while `b` is not zero, swap and compute `a % b`.
+// a int
+// b int
+
+func GCD(a, b int) (int, error) {
+	if b == 0 || a == 0 {
+		return 0, fmt.Errorf("b cannot be zero")
+	}
+
+	for b != 0 {
+		ost := a % b
+		a = b
+		b = ost
+	}
+
+	if a < 0 {
+		return -a, nil
+	}
+
+	return a, nil
+}
+
+// 22 Write a function `LCM` that computes the least common multiple of `a` and `b`. Use the formula `abs(a*b)/GCD(a,b)` and a conditional to handle zero.
+// a int
+// b int
+
+func LCM(a, b int) (int, error) {
+	gcd, err := GCD(a, b)
+	if err != nil {
+		return 0, err
+	}
+
+	abs := a * b
+	if abs < 0 {
+		abs = abs * -1
+	}
+
+	return abs / gcd, nil
+}
+
+// 23 Write a function `UniqueInts` that removes duplicate integers from a slice and returns a new slice. Loop over `nums`, use a map to track seen values, and append unseen.
+// nums []int
+
+func UniqueInts(nums []int) []int {
+	newList := []int{}
+	foundMap := map[int]bool{}
+
+	for _, num := range nums {
+		_, ok := foundMap[num]
+		if !ok {
+			newList = append(newList, num)
+			foundMap[num] = true
+		}
+	}
+
+	return newList
+}
+
+// 24 Write a function `BubbleSort` that sorts a slice of integers using the bubble sort algorithm. Use nested loops and swap with a conditional `if nums[j] > nums[j+1]`.
+// nums []int
+
+func BubbleSort(nums []int) []int {
+	if len(nums) == 0 || len(nums) == 1 {
+		return nums
+	}
+
+	sortedIndex := len(nums)
+
+	for sortedIndex != 0 {
+		for i, j := 0, 1; j < sortedIndex; j++ {
+			if nums[i] > nums[j] {
+				tmp := nums[i]
+				nums[i] = nums[j]
+				nums[j] = tmp
+			}
+			i++
+		}
+		sortedIndex--
+
+	}
+
+	return nums
 }
