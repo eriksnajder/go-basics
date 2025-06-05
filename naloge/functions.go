@@ -609,3 +609,87 @@ func BubbleSort(nums []int) []int {
 
 	return nums
 }
+
+// 25 Write a function `MergeSorted` that merges two sorted slices into one sorted slice. Use two indices, loop while both have elements, and compare to append.
+// slice1 []int
+// slice2 []int
+
+func MergeSorted(seznam1, seznam2 []int) []int {
+	seznam3 := []int{}
+
+	i := 0
+	j := 0
+
+	// najdi najmanjše število in zmanjšaj za 1
+	var currentMax int
+	if seznam1[0] > seznam2[0] {
+		currentMax = seznam2[0] - 1
+	} else {
+		currentMax = seznam1[0] - 1
+	}
+
+	for {
+		//če pridemo do konca seznam1, samo dodamo ostale elemente iz seznam2
+		if i == len(seznam1) {
+			for _, item := range seznam2[j:] {
+				if item > currentMax {
+					seznam3 = append(seznam3, seznam2[j])
+					currentMax = seznam2[j]
+					j++
+				}
+			}
+			break
+		}
+		//če pridemo do konca seznam2, samo dodamo ostale elemente iz seznam1
+		if j == len(seznam2) {
+			for _, item := range seznam1[i:] {
+				if item > currentMax {
+					seznam3 = append(seznam3, seznam1[i])
+					currentMax = seznam1[i]
+					i++
+				}
+			}
+			break
+		}
+
+		for seznam1[i] <= currentMax {
+			i++
+		}
+
+		for seznam2[j] <= currentMax {
+			j++
+		}
+
+		//če sta elementa ista, dodamo enega in nadaljujemo
+		if seznam1[i] == seznam2[j] {
+			seznam3 = append(seznam3, seznam1[i])
+			currentMax = seznam1[i]
+			i++
+			j++
+		} else if seznam1[i] < seznam2[j] {
+			seznam3 = append(seznam3, seznam1[i])
+			currentMax = seznam1[i]
+			i++
+		} else {
+			seznam3 = append(seznam3, seznam2[j])
+			currentMax = seznam2[j]
+			j++
+		}
+	}
+
+	return seznam3
+
+}
+
+// 26 Write a function `SumMatrix` that sums all elements in a 2D slice (matrix). Use nested loops: outer for rows, inner for columns, add each value.
+// matrix [][]int
+
+func SumMatrix(matrix [][]int) int {
+	sum := 0
+	for _, seznam := range matrix {
+		for _, item := range seznam {
+			sum += item
+		}
+	}
+	return sum
+}
