@@ -693,3 +693,16 @@ func SumMatrix(matrix [][]int) int {
 	}
 	return sum
 }
+
+// 27 Write a function `MainDiagonal` that returns the main diagonal elements of a square matrix as a slice. Loop once using index `i` and append `matrix[i][i]`.
+// matrix [][]int
+
+func MainDiagonal(matrix [][]int) []int {
+	out := []int{}
+
+	for i := 0; i < len(matrix); i++ {
+		out = append(out, matrix[i][i])
+	}
+
+	return out
+}

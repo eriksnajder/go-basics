@@ -1041,3 +1041,26 @@ func TestSumMatrix(t *testing.T) {
 		})
 	}
 }
+
+func TestMainDiagonal(t *testing.T) {
+	tests := map[string]struct {
+		input    [][]int
+		expected []int
+	}{
+		"success": {
+			input:    [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
+			expected: []int{1, 5, 9},
+		},
+		"success 2": {
+			input:    [][]int{{1, 2, 6}, {4, 5, 5}, {7, 8, 19}},
+			expected: []int{1, 5, 19},
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			result := MainDiagonal(test.input)
+			assert.Equal(t, test.expected, result)
+		})
+	}
+}
