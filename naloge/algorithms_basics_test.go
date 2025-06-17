@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSmallestEven(t *testing.T) {
+func TestSmallestRepeatingEven(t *testing.T) {
 	tests := map[string]struct {
 		input       []int
 		expected    int
@@ -43,7 +43,7 @@ func TestSmallestEven(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			actual, err := SmallestEven(test.input)
+			actual, err := SmallestRepeatingEven(test.input)
 			if err != nil {
 				if test.errExpected != nil {
 					assert.ErrorContains(t, test.errExpected, err.Error())
@@ -92,5 +92,135 @@ func TestPrimeAndRepeating(t *testing.T) {
 			assert.ElementsMatch(t, test.expected, actual)
 		})
 
+	}
+}
+
+func TestAverageOddIndiceDivByThree(t *testing.T) {
+	tests := map[string]struct {
+		input       []int
+		expected    float64
+		errExpected error
+	}{
+		"happy path": {
+			input:    []int{3, 6, 9, 12, 15, 18},
+			expected: 12.0,
+		},
+		"unhappy repeated": {
+			input:       []int{1, 2, 3, 4},
+			expected:    0.0,
+			errExpected: fmt.Errorf("no matching values at odd indices"),
+		},
+		"3 repeated": {
+			input:    []int{3, 3, 3, 3},
+			expected: 3.0,
+		},
+		"happy path 2.0": {
+			input:    []int{5, 6, 7, 9, 11, 12},
+			expected: 9.0,
+		},
+		"empty input": {
+			input:       []int{},
+			expected:    0.0,
+			errExpected: fmt.Errorf("no matching values at odd indices"),
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := AverageOddIndiceDivByThree(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestOddPalindromes(t *testing.T) {
+	tests := map[string]struct {
+		input    []int
+		expected int
+	}{
+		"happy path": {
+			input:    []int{1, 3, 5, 7, 9, 11, 33, 44},
+			expected: 7,
+		},
+		"no odds": {
+			input:    []int{2, 4, 6, 8},
+			expected: 0,
+		},
+		"100s palindromes": {
+			input:    []int{121, 131, 141, 151},
+			expected: 4,
+		},
+		"empty path": {
+			input:    []int{},
+			expected: 0,
+		},
+		"repeating values": {
+			input:    []int{1, 1, 1, 1},
+			expected: 1,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual := OddPalindromes(test.input)
+
+			assert.Equal(t, test.expected, actual)
+		})
+
+	}
+}
+
+func TestSecondLargestRepeatingValue(t *testing.T) {
+	tests := map[string]struct {
+		input       []int
+		expected    int
+		errExpected error
+	}{
+
+		"happy path": {
+			input:    []int{5, 5, 6, 6, 7, 7},
+			expected: 6,
+		},
+		"unhappy repeated": {
+			input:       []int{1, 1, 2, 3, 4, 5},
+			expected:    0,
+			errExpected: fmt.Errorf("not enough repeating values"),
+		},
+		"reverse path": {
+			input:    []int{9, 9, 8, 8, 7, 7, 6, 6},
+			expected: 8,
+		},
+		"happy path 2.0": {
+			input:    []int{2, 2, 2, 1, 1},
+			expected: 1,
+		},
+		"empty input": {
+			input:       []int{},
+			expected:    0,
+			errExpected: fmt.Errorf("not enough repeating values"),
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := SecondLargestRepeatingValue(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
 	}
 }

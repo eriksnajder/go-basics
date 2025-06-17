@@ -10,7 +10,7 @@ import "fmt"
 //   []int{10, 10, 8, 8, 6} => 8
 //   []int{1, 2, 3, 2, 4} => 2
 
-func SmallestEven(numbers []int) (int, error) {
+func SmallestRepeatingEven(numbers []int) (int, error) {
 	frequencies := map[int]int{}
 	for _, number := range numbers {
 		if number%2 != 0 {
@@ -101,13 +101,87 @@ func PrimeAndRepeating(numbers []int) []int {
 //   []int{3, 3, 3, 3} => 3.0
 //   []int{5, 6, 7, 9, 11, 12} => 9.0
 
+// 1. naredi seznam, ki bo vseboval numbers[n], ki bodo na lihem indeksu.
+// 2. naredi seznam, ki bo vseboval oddNumbers[n], ki so deljiva s 3.
+// 3. naredi loop, ki bo izračunal vsoto divThreeNumbers[n], in na koncu izračunal average[divThreeNumbers]
+
+func AverageOddIndiceDivByThree(numbers []int) (float64, error) {
+	oddNumbers := []int{}
+	divThreeNumbers := []int{}
+	var sum float64
+
+	if len(numbers) == 0 {
+		return 0, fmt.Errorf("no matching values at odd indices")
+	}
+
+	for i, number := range numbers {
+		if i%2 != 0 {
+			oddNumbers = append(oddNumbers, number)
+		}
+	}
+
+	for _, number := range oddNumbers {
+		if number%3 == 0 {
+			divThreeNumbers = append(divThreeNumbers, number)
+		}
+	}
+
+	if len(divThreeNumbers) == 0 {
+		return 0, fmt.Errorf("no matching values at odd indices")
+	}
+
+	for _, number := range divThreeNumbers {
+		sum += float64(number)
+	}
+
+	return sum / float64(len(divThreeNumbers)), nil
+}
+
 // 04 Return the number of unique values that are palindromes and odd
 // Test cases:
-//   []int{1, 3, 5, 7, 9, 11, 33, 44} => 6
+//   []int{1, 3, 5, 7, 9, 11, 33, 44} => 7
 //   []int{2, 4, 6, 8} => 0
 //   []int{121, 131, 141, 151} => 4
 //   []int{} => 0
 //   []int{1, 1, 1, 1} => 1
+
+// 1. naredi funkcijo, ki prepozna števila, ki so palindromi
+
+func numberPalindrome(number int) bool {
+	strVal := fmt.Sprintf("%d", number)
+	if strVal == "" {
+		return false
+	}
+	newStrVal := ""
+	for i := len(strVal) - 1; i >= 0; i-- {
+		newStrVal += string(strVal[i])
+	}
+	return newStrVal == strVal
+}
+
+// 2. naredi seznam, ki bo vseboval numbers[n], ki so palindromi
+// 3. naredi seznam, ki bo vseboval palindromes[n], ki so liha števila
+// 4. vrni len(oddPalindromes)
+
+func OddPalindromes(numbers []int) int {
+	palindromes := []int{}
+	oddPalindromes := map[int]bool{}
+
+	for _, number := range numbers {
+		if numberPalindrome(number) {
+			palindromes = append(palindromes, number)
+		}
+	}
+
+	for _, number := range palindromes {
+		if number%2 != 0 {
+			oddPalindromes[number] = true
+
+		}
+	}
+
+	return len(oddPalindromes)
+}
 
 // 05 Return the second largest value that appears more than once
 // Test cases:
@@ -116,6 +190,51 @@ func PrimeAndRepeating(numbers []int) []int {
 //   []int{9, 9, 8, 8, 7, 7, 6, 6} => 8
 //   []int{} => "not enough repeating values"
 //   []int{2, 2, 2, 1, 1} => 1
+
+// 1. napiši funkcijo, ki uporabila slovar 'key : value' in bo prepoznala, kateri keyi imajo value > 1.
+// 2.
+
+func SecondLargestRepeatingValue(numbers []int) (int, error) {
+	frequencies := map[int]int{}
+
+	for _, number := range numbers {
+		frequencies[number]++
+	}
+
+	repeated := []int{}
+	for number, frequency := range frequencies {
+		if frequency > 1 {
+			repeated = append(repeated, number)
+		}
+	}
+
+	if len(repeated) < 2 {
+		return 0, fmt.Errorf("not enough repeating values")
+	}
+
+	var highest int
+	var secondHighest int
+
+	if repeated[0] > repeated[1] {
+		highest = repeated[0]
+		secondHighest = repeated[1]
+	} else {
+		secondHighest = repeated[0]
+		highest = repeated[1]
+	}
+
+	for _, number := range repeated[2:] {
+		if number > highest {
+			secondHighest = highest
+			highest = number
+		} else if number > secondHighest {
+			secondHighest = number
+		}
+	}
+
+	return secondHighest, nil
+
+}
 
 // 06 Return the longest increasing sub-slice from a list of integers
 // Test cases:
