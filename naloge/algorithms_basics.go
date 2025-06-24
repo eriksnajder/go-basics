@@ -1,6 +1,9 @@
 package naloge
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 // 01 Return the smallest even number that appears more than once
 // Test cases:
@@ -244,6 +247,43 @@ func SecondLargestRepeatingValue(numbers []int) (int, error) {
 //   []int{1, 2, 1, 2, 3} => [1 2 3]
 //   []int{10} => [10]
 
+// 1. iz slicea "s" bomo ven jemali sub-slice "subS"
+// 2. naredimo loop, ki bo preverjal, ali številke naraščajo in si zapomnil najdaljši "len(subs)"
+// 3. loop bo vrnil "longestSubS"
+
+func LongestIncreasingSubSlice(s []int) ([]int, error) {
+
+	if len(s) == 0 {
+		return []int{}, fmt.Errorf("empty input")
+	}
+
+	subS := []int{s[0]}
+	longestSubS := []int{}
+	growingInt := s[0]
+
+	for _, number := range s[1:] {
+		if number > growingInt {
+			subS = append(subS, number)
+			growingInt = number
+		} else {
+			if len(subS) > len(longestSubS) {
+				longestSubS = subS
+				subS = []int{number}
+				growingInt = number
+			} else {
+				subS = []int{number}
+				growingInt = number
+			}
+		}
+	}
+	if len(subS) > len(longestSubS) {
+		longestSubS = subS
+	}
+
+	return longestSubS, nil
+
+}
+
 // 07 Return the product of all odd numbers that are also perfect squares
 // Test cases:
 //   []int{1, 4, 9, 16, 25} => 225
@@ -252,6 +292,43 @@ func SecondLargestRepeatingValue(numbers []int) (int, error) {
 //   []int{1, 1, 1} => 1
 //   []int{49, 36, 25} => 1225
 
+// 1. preveri, ali so v sliceu "s" liha števila, ki so hkrati kvadratna potenca nekega naravnea števila, in jih dodaj v nov slice.
+// 2. vsa števila v novem seznamu pomnoži in na koncu vrni "product"
+
+func PerfectSquareOddNumberProduct(numbers []int) (int, error) {
+	if len(numbers) == 0 {
+		return 0, fmt.Errorf("no matching values")
+	}
+
+	oddNumbers := []int{}
+	product := 1
+
+	for _, number := range numbers {
+
+		if number%2 != 0 {
+			if number == 1 {
+				oddNumbers = append(oddNumbers, number)
+				continue
+			}
+
+			sqrt := int(math.Sqrt(float64(number)))
+			if sqrt*sqrt == number {
+				oddNumbers = append(oddNumbers, number)
+			}
+		}
+	}
+
+	if len(oddNumbers) == 0 {
+		return 0, fmt.Errorf("no matching values")
+	}
+
+	for _, number := range oddNumbers {
+		product *= number
+	}
+
+	return product, nil
+}
+
 // 08 Return the first value that is both a multiple of 3 and appears exactly twice
 // Test cases:
 //   []int{3, 3, 6, 6, 9, 9} => 3
@@ -259,6 +336,34 @@ func SecondLargestRepeatingValue(numbers []int) (int, error) {
 //   []int{} => "no valid match found"
 //   []int{6, 6, 3, 3} => 6
 //   []int{12, 12, 15} => 12
+
+// 1. v sliceu "numbers" preveri številke, če so deljive s 3.
+// 2. v kolikor je, jo dodaj v nov map, kjer boš za vsak key iskal value.
+// 3. čim je eden izmed value > 1, --> return key in zaključi.
+
+func FirstMultOfThreeExactlyTwice(numbers []int) (int, error) {
+	if len(numbers) == 0 {
+		return 0, fmt.Errorf("no valid match found")
+	}
+
+	frequencies := map[int]int{}
+
+	for _, number := range numbers {
+		frequencies[number]++
+	}
+
+	for _, number := range numbers {
+		if number%3 != 0 {
+			continue
+		}
+		value := frequencies[number]
+		if value == 2 {
+			return number, nil
+		}
+	}
+
+	return 0, fmt.Errorf("no valid match found")
+}
 
 // 09 From two slices, return all values that are odd and only appear in one of the slices
 // Test cases:
