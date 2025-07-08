@@ -373,6 +373,59 @@ func FirstMultOfThreeExactlyTwice(numbers []int) (int, error) {
 //   A: [], B: [1, 2, 3] => [1 3]
 //   A: [7, 9], B: [] => [7 9]
 
+// 1. 2 prazna slicea "numbersA" in "numbersB", v katere se bo dajalo liha števila iz "numbers1" in "numbers2"
+// 2. Preveri "numberA" in "numbersB", če se katerokoli število pojavi v obeh sliceih
+// 3. Vrni slice lihih števil "numbersOK", ki se ne ponavljajo.
+
+func OddNotRepeatingNumbers(numbersA, numbersB []int) []int {
+	numbersOK := []int{}
+
+	if len(numbersA) == 0 && len(numbersB) == 0 {
+		return numbersOK
+	}
+
+	for _, number := range numbersA {
+		if number%2 == 0 {
+			continue
+		}
+
+		found := false
+
+		for _, num := range numbersB {
+			if number == num {
+				found = true
+			}
+		}
+
+		if !found {
+			numbersOK = append(numbersOK, number)
+		}
+
+	}
+
+	for _, number := range numbersB {
+		if number%2 == 0 {
+			continue
+		}
+
+		found := false
+
+		for _, num := range numbersA {
+			if number == num {
+				found = true
+			}
+		}
+
+		if !found {
+			numbersOK = append(numbersOK, number)
+		}
+
+	}
+
+	return numbersOK
+
+}
+
 // 10 Return the index of the smallest number that appears more than once and is a multiple of 5
 // Test cases:
 //   []int{10, 20, 10, 30, 20, 40} => 0
@@ -380,6 +433,44 @@ func FirstMultOfThreeExactlyTwice(numbers []int) (int, error) {
 //   []int{} => "no valid repeating multiple of 5"
 //   []int{5, 5, 10, 10} => 0
 //   []int{25, 30, 25, 30, 15, 15} => 4
+
+func IndexSmallestMultipleOfFive(numbers []int) (int, error) {
+	if len(numbers) == 0 {
+		return 0, fmt.Errorf("no valid repeating multiple of 5")
+	}
+
+	seen := map[int]int{}
+
+	var smallest *int
+	var smallestIdx *int
+	for idx, number := range numbers {
+		if number%5 == 0 {
+			i, ok := seen[number]
+			if !ok {
+				seen[number] = idx
+				continue
+			}
+			if smallest == nil && ok {
+				smallest = &number
+				smallestIdx = &i
+				continue
+			}
+
+			if number < *smallest && ok {
+				smallest = &number
+				smallestIdx = &i
+			}
+
+			seen[number] = idx
+		}
+	}
+
+	if smallestIdx == nil {
+		return 0, fmt.Errorf("no valid repeating multiple of 5")
+	}
+
+	return *smallestIdx, nil
+}
 
 // 11 Return the value that occurs most frequently, but only if it is a perfect square
 // Test cases:
@@ -389,21 +480,139 @@ func FirstMultOfThreeExactlyTwice(numbers []int) (int, error) {
 //   []int{1, 1, 2, 2, 4, 4} => 1
 //   []int{25, 36, 25, 36} => 25
 
+// 1. naredi map "frequencies", ki bo vrnil 'key : value' števil iz slicea "numbers", ki so perfect square.
+// 2. poišči in vrni iz funkcije število, ki ima najvišji value.
+
+func MostFrequentPerfectSquare(numbers []int) (int, error) {
+	if len(numbers) == 0 {
+		return 0, fmt.Errorf("no perfect square values")
+	}
+
+	frequencies := map[int]int{}
+
+	for _, number := range numbers {
+		sqrt := int(math.Sqrt(float64(number)))
+		if sqrt*sqrt == number {
+			frequencies[number]++
+		}
+
+	}
+
+	if len(frequencies) == 0 {
+		return 0, fmt.Errorf("no perfect square values")
+	}
+
+	highestKey := 0
+	highestValue := 0
+
+	for _, number := range numbers {
+		frequency, ok := frequencies[number]
+		if !ok {
+			continue
+		}
+		if frequency > highestValue {
+			highestKey = number
+			highestValue = frequency
+		}
+	}
+
+	return highestKey, nil
+}
+
 // 12 Return the number of distinct primes that divide at least two different numbers in the list
 // Test cases:
-//   []int{6, 10, 15} => 2       // 2 and 5 divide multiple
+//   []int{6, 10, 15} => 3       // 2 and 5 divide multiple
 //   []int{2, 3, 5, 7} => 0
-//   []int{4, 6, 8, 10} => 2     // 2 and maybe 5
+//   []int{4, 15, 8, 10} => 2     // 2
 //   []int{} => 0
 //   []int{9, 15, 21} => 1       // 3
 
-// 13 Return the sum of the two most frequent even numbers that are also divisible by 4
+func primes(num int) []int {
+	out := []int{}
+	for i := 2; i <= num; i++ {
+		if isPrime(i) {
+			out = append(out, i)
+		}
+	}
+	return out
+}
+
+func DistinctPrimeDivisors(numbers []int) int {
+	seen := map[int]int{}
+
+	for _, number := range numbers {
+		allPrimes := primes(number)
+
+		for _, prime := range allPrimes {
+			if number%prime == 0 {
+				seen[prime]++
+			}
+		}
+	}
+
+	total := 0
+	for _, frequency := range seen {
+		if frequency >= 2 {
+			total++
+		}
+	}
+
+	return total
+}
+
+// 13 Return the sum of the first two most frequent even numbers that are also divisible by 4
 // Test cases:
-//   []int{4, 4, 8, 8, 12, 12} => "not enough matching values"
+//   []int{4, 4, 8, 8, 12, 12} => 12
 //   []int{2, 6, 10} => "not enough matching values"
-//   []int{4, 4, 8} => "not enough matching values"
+//   []int{4, 4, 8} => 12
 //   []int{16, 16, 20, 20, 24} => 36
 //   []int{} => "not enough matching values"
+
+// 1. preglej čez slice "numbers" in naredi map "frequencies", ki bo vseboval 'key : value' vseh sodih števil, ki so deljiva s 4
+// 2. poišči prvi dve števili, ki se pojavita največkrat, in ju vrni iz funkcije kot vsoto "sum".
+
+func TwoMostFrequentNumbersDivByFour(numbers []int) (int, error) {
+	if len(numbers) == 0 {
+		return 0, fmt.Errorf("not enough matching values")
+	}
+
+	frequencies := map[int]int{}
+
+	for _, number := range numbers {
+		if number%4 == 0 {
+			frequencies[number]++
+		}
+	}
+
+	if len(frequencies) <= 1 {
+		return 0, fmt.Errorf("not enough matching values")
+	}
+
+	highestKey := 0
+	highestValue := 0
+	secondHighestKey := 0
+	secondHighestValue := 0
+
+	for _, number := range numbers {
+		frequency, ok := frequencies[number]
+		if !ok || number == highestKey || number == secondHighestKey {
+			continue
+		}
+		if frequency > highestValue {
+			secondHighestKey = highestKey
+			secondHighestValue = highestValue
+			highestKey = number
+			highestValue = frequency
+		} else if frequency > secondHighestValue {
+			secondHighestKey = number
+			secondHighestValue = frequency
+		}
+
+	}
+	sum := highestKey + secondHighestKey
+
+	return sum, nil
+}
 
 // 14 Given a list of strings, return the shortest one that contains only digits and has no repeated characters
 // Test cases:
