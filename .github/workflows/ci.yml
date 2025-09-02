@@ -3,12 +3,10 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ "**" ]
   pull_request:
     branches: [ "**" ]
 
-permissions:
-  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -60,3 +58,5 @@ jobs:
         run: |
           mkdir -p .artifacts
           go test ./... -race 
+
+   
