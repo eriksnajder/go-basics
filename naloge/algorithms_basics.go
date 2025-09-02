@@ -3,6 +3,8 @@ package naloge
 import (
 	"fmt"
 	"math"
+	"strconv"
+	"strings"
 )
 
 // 01 Return the smallest even number that appears more than once
@@ -619,8 +621,55 @@ func TwoMostFrequentNumbersDivByFour(numbers []int) (int, error) {
 //   []string{"123", "112", "789", "56"} => "56"
 //   []string{"abc", "999", "111"} => "no valid string found"
 //   []string{} => "no valid string found"
-//   []string{"9876", "1234", "88"} => "88"
+//   []string{"9876", "1234", "88"} => "1234" ?????????
 //   []string{"9", "98", "987"} => "9"
+
+// 1. naredi map "frequencies", ki bo vseboval stringe iz sliceov "numbers" in bo podal 'key(string):value(dolzina stringa)'
+// 2. preveri ali so elementi v stringu števila
+// 3. preveri, kateri je najkrajši in nima ponavljajočih elementov.
+// 4. funkcija naj vrne string(key) "number" ali 'error'
+
+func ShortestStringNoRepeatingCharacters(numbers []string) (string, error) {
+	errInvalid := fmt.Errorf("no valid string found")
+	if len(numbers) == 0 {
+		return "", errInvalid
+	}
+
+	shortest := ""
+
+	for _, s := range numbers {
+		isNumeric := true
+		repeating := false
+		frequencies := map[int]int{}
+
+		for _, char := range s {
+			currentNum, err := strconv.Atoi(string(char))
+			if err != nil {
+				isNumeric = false
+				break
+			}
+
+			frequencies[currentNum]++
+			if frequencies[currentNum] > 1 {
+				repeating = true
+				break
+			}
+		}
+
+		if !isNumeric || repeating {
+			continue
+		}
+		if len(shortest) == 0 || len(s) <= len(shortest) {
+			shortest = s
+		}
+	}
+
+	if len(shortest) > 0 {
+		return shortest, nil
+	}
+
+	return "", errInvalid
+}
 
 // 15 From a list of numbers, return the average of all values that:
 // Test cases:
@@ -632,11 +681,49 @@ func TwoMostFrequentNumbersDivByFour(numbers []int) (int, error) {
 
 // 16 Count how many groups of consecutive odd numbers sum to an even number
 // Test cases:
-//   []int{1, 3, 5, 2, 7, 9, 11} => 2      // [1 3 5] = 9 (odd), [7 9 11] = 27 (odd), skip; no even
-//   []int{1, 3, 2, 5, 7, 2, 9, 11} => 1   // [5 7] = 12 (even)
+//   []int{1, 3, 5, 2, 7, 9, 11} => 0      // [1 3 5] = 9 (odd), [7 9 11] = 27 (odd), skip; no even
+//   []int{1, 3, 2, 5, 7, 2, 9, 11} => 3   // [5 7] = 12 (even)
 //   []int{} => 0
 //   []int{2, 4, 6} => 0
-//   []int{1, 3, 5, 7} => 0
+//   []int{1, 3, 5, 7} => 1
+
+// 1. preverjaj skozi slice 'numbers' in seštevaj vsoto števil, dokler ne naletiš na sodo število.
+// 2. ko prideš do sodega, preveri če je vsota liho ali sodo število.
+// 3. če je sodo, prištej v 'consGroups += 1', če ne, continue.
+// 4. preden začneš preverjati naslednja števila v 'numbers', spravi vsoto na 0 in ponovi.
+
+func GroupsOfEvenSumsOfConsecutiveOddNums(numbers []int) int {
+	if len(numbers) == 0 {
+		return 0
+	}
+
+	sum := 0
+	consGroups := 0
+
+	for _, number := range numbers {
+		if number%2 != 0 {
+			sum += number
+		} else {
+			if sum == 0 {
+				continue
+			} else if sum%2 == 0 {
+				consGroups += 1
+				sum = 0
+			} else {
+				sum = 0
+			}
+		}
+
+	}
+	if sum%2 == 0 && sum != 0 {
+		consGroups += 1
+		sum = 0
+	} else {
+		sum = 0
+	}
+
+	return consGroups
+}
 
 // 17 From a slice of strings, return the most common word after lowercasing and removing punctuation
 // Test cases:
@@ -646,21 +733,84 @@ func TwoMostFrequentNumbersDivByFour(numbers []int) (int, error) {
 //   ["One", "Two", "Two", "Three."] => "two"
 //   ["What's", "what's", "Whats"] => "whats"
 
-// 18 From a slice of strings, return true if reversing all words and sorting gives the same as sorting and then reversing all
+func MostCommonWordLowered(words []string) (string, error) {
+	specialChars := "!.,?;:=<>'*"
+	errInvalid := fmt.Errorf("no input provided")
+	if len(words) == 0 {
+		return "", errInvalid
+	}
+
+	z := 0
+	mostCommonWord := ""
+	frequencies := map[string]int{}
+	for _, word := range words {
+		s := strings.ToLower(word)
+		for _, special := range specialChars {
+			s = strings.Replace(s, string(special), "", -1)
+		}
+
+		frequencies[s]++
+	}
+	for word, frequency := range frequencies {
+		if frequency > z {
+			mostCommonWord = word
+			z = frequency
+		}
+
+	}
+
+	return mostCommonWord, nil
+}
+
+// 18. Given a slice of strings, check if these two results are the same:
+//
+// 1) Reverse every word, then sort the list.
+// 2) Sort the list first, then reverse every word.
+//
+// Return true if both results are identical, otherwise false.
+//
 // Test cases:
 //   ["abc", "def"] => true
 //   ["abc", "cba"] => false
-//   [] => true
+//   []              => true
 //   ["a", "b", "c"] => true
-//   ["xy", "yx"] => false
+//   ["xy", "yx"]    => false
 
-// 19 Given a list of integers, return the sum of values that:
+// 19. Given a list of integers, return the sum of all values that are prime
+// and occur exactly once in the list.
+//
+// If no such values exist, return "no qualifying values".
+//
 // Test cases:
-//   []int{2, 3, 5, 5, 7, 10} => 10
-//   []int{4, 6, 8, 10} => "no qualifying values"
-//   []int{} => "no qualifying values"
-//   []int{13, 15, 17, 13} => 17
-//   []int{1, 2, 3, 4} => "no qualifying values"
+//   []int{2, 3, 5, 5, 7, 10} => 12      // 2 + 3 + 7
+//   []int{4, 6, 8, 10}       => "no qualifying values"
+//   []int{}                  => "no qualifying values"
+//   []int{13, 15, 17, 13}    => 17      // 17 only
+//   []int{1, 2, 3, 4}
+
+func SumOfPrimeNumsNotRepeating(numbers []int) (int, error) {
+	errInvalid := fmt.Errorf("no qualifying values")
+	if len(numbers) == 0 {
+		return 0, errInvalid
+	}
+
+	frequencies := map[int]int{}
+	sum := 0
+
+	for _, number := range numbers {
+		if isPrime(number) {
+			frequencies[number]++
+		}
+	}
+
+	for number, frequency := range frequencies {
+		if frequency == 1 {
+			sum += number
+		}
+	}
+
+	return sum, nil
+}
 
 // 20 From a list of strings, return all that are palindromes after removing non-letter characters and lowercasing
 // Test cases:

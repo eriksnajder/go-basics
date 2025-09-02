@@ -593,3 +593,172 @@ func TestTwoMostFrequentNumbersDivByFour(t *testing.T) {
 		})
 	}
 }
+
+func TestShortestStringNoRepeatingCharacters(t *testing.T) {
+	tests := map[string]struct {
+		input       []string
+		expected    string
+		errExpected error
+	}{
+		"happy path": {
+			input:    []string{"123", "112", "789", "56"},
+			expected: "56",
+		},
+		"letters/repeating in slice": {
+			input:       []string{"abc", "999", "111"},
+			errExpected: fmt.Errorf("no valid string found"),
+		},
+		"empty slice": {
+			input:       []string{},
+			errExpected: fmt.Errorf("no valid string found"),
+		},
+		"the weird one": {
+			input:    []string{"9876", "1234", "88"},
+			expected: "1234",
+		},
+		"single elem result": {
+			input:    []string{"9", "98", "987"},
+			expected: "9",
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := ShortestStringNoRepeatingCharacters(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestGroupsOfEvenSumsOfConsecutiveOddNums(t *testing.T) {
+	tests := map[string]struct {
+		input    []int
+		expected int
+	}{
+		"unhappy path": {
+			input:    []int{1, 3, 5, 2, 7, 9, 11},
+			expected: 0,
+		},
+		"happy path": {
+			input:    []int{1, 3, 2, 5, 7, 2, 9, 11},
+			expected: 3,
+		},
+		"no odd number path": {
+			input:    []int{2, 4, 6},
+			expected: 0,
+		},
+		"one group path": {
+			input:    []int{1, 3, 5, 7},
+			expected: 1,
+		},
+		"empty input": {
+			input:    []int{},
+			expected: 0,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual := GroupsOfEvenSumsOfConsecutiveOddNums(test.input)
+
+			assert.Equal(t, test.expected, actual)
+		})
+
+	}
+}
+
+func TestMostCommonWordLowered(t *testing.T) {
+	tests := map[string]struct {
+		input       []string
+		expected    string
+		errExpected error
+	}{
+		"succes hello": {
+			input:    []string{"Hello!", "hello", "HELLO.", "Hi"},
+			expected: "hello",
+		},
+		"succes yes": {
+			input:    []string{"Yes?", "yes!", "YES", "no"},
+			expected: "yes",
+		},
+		"empty slice": {
+			input:       []string{},
+			errExpected: fmt.Errorf("no input provided"),
+		},
+		"three diff words": {
+			input:    []string{"One", "Two", "Two", "Three."},
+			expected: "two",
+		},
+		"single repeated word": {
+			input:    []string{"What's", "what's", "Whats"},
+			expected: "whats",
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := MostCommonWordLowered(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestSumOfPrimeNumsNotRepeating(t *testing.T) {
+	tests := map[string]struct {
+		input       []int
+		expected    int
+		errExpected error
+	}{
+		"succes": {
+			input:    []int{2, 3, 5, 5, 7, 10},
+			expected: 12,
+		},
+		"no prime numbers": {
+			input:       []int{4, 6, 8, 10},
+			errExpected: fmt.Errorf("no qualifying values"),
+		},
+		"empty slice": {
+			input:       []int{},
+			errExpected: fmt.Errorf("no qualifying values"),
+		},
+		"only one correct number": {
+			input:    []int{13, 15, 17, 13},
+			expected: 17,
+		},
+		"not enough matching values": {
+			input:    []int{1, 2, 3, 4},
+			expected: 5,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := SumOfPrimeNumsNotRepeating(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
