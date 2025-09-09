@@ -762,3 +762,128 @@ func TestSumOfPrimeNumsNotRepeating(t *testing.T) {
 		})
 	}
 }
+
+func TestIsStringPalindrome(t *testing.T) {
+	tests := map[string]struct {
+		input    []string
+		expected []string
+	}{
+		"succes ": {
+			input:    []string{"A man, a plan, a canal: Panama", "Racecar", "hello"},
+			expected: []string{"A man, a plan, a canal: Panama", "Racecar"},
+		},
+		"unhappy path": {
+			input:    []string{"abc", "def"},
+			expected: []string{},
+		},
+		"single string complex succes": {
+			input:    []string{"No 'x' in Nixon"},
+			expected: []string{"No 'x' in Nixon"},
+		},
+		"all strings palindromes & same on newWord": {
+			input:    []string{"Madam!", "madam", "MaDaM"},
+			expected: []string{"Madam!", "madam", "MaDaM"},
+		},
+		"empty input": {
+			input:    []string{},
+			expected: []string{},
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual := IsStringPalindrome(test.input)
+
+			assert.Equal(t, test.expected, actual)
+		})
+
+	}
+}
+
+func TestAverageOfEvenNonnegativeNums(t *testing.T) {
+	tests := map[string]struct {
+		input       []int
+		expected    int
+		errExpected error
+	}{
+		"succes regular": {
+			input:    []int{2, 4, -1, -3, 6, 7},
+			expected: 4,
+		},
+		"no even & positive numbers": {
+			input:       []int{1, 3, 5, -2},
+			errExpected: fmt.Errorf("no even or/and positive values"),
+		},
+		"empty slice": {
+			input:       []int{},
+			errExpected: fmt.Errorf("no even or/and positive values"),
+		},
+		"only one correct number": {
+			input:       []int{-10, -20, -30},
+			errExpected: fmt.Errorf("no even or/and positive values"),
+		},
+		"not enough matching values": {
+			input:    []int{10, 20, 30},
+			expected: 20,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := AverageOfEvenNonnegativeNums(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestLongestStringFirstAndLastCharacterSame(t *testing.T) {
+	tests := map[string]struct {
+		input       []string
+		expected    string
+		errExpected error
+	}{
+		"succes racecar": {
+			input:    []string{"Anna", "civic", "", "racecar", "apple"},
+			expected: "racecar",
+		},
+		"empty strings failure": {
+			input:       []string{"", "", ""},
+			errExpected: fmt.Errorf("no valid word found"),
+		},
+		"empty slice": {
+			input:       []string{},
+			errExpected: fmt.Errorf("no valid word found"),
+		},
+		"succes two longest words": {
+			input:    []string{"level", "stats", "bob"},
+			expected: "stats",
+		},
+		"succes repeated word": {
+			input:    []string{"wow", "deed", "deed"},
+			expected: "deed",
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := LongestStringFirstAndLastCharacterSame(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}

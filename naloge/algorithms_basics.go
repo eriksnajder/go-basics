@@ -820,13 +820,72 @@ func SumOfPrimeNumsNotRepeating(numbers []int) (int, error) {
 //   ["No 'x' in Nixon"] => ["No 'x' in Nixon"]
 //   ["Madam!", "madam", "MaDaM"] => ["Madam!", "madam", "MaDaM"]
 
+//  Naredi funkcijo, ki bo iz slicea stringov "words" preuredila stringe "word", da bodo brez vseh znakov, presledkov,
+// in velikih začetnic.
+// 1. najprej poberi iz stringov vse non-letter elemente in naredi iz nje nov string "newWord"
+// 2. nato jo preveri, če je palindrom (iz leve in desne prebrano ista beseda)
+// 3. če isPalindrome, dodaj prvotni string v nov slice "palindromes", ki naj ga funkcija vrne kot rezultat.
+
+func IsStringPalindrome(words []string) []string {
+	specialChars := " !.,?;:=<>'*"
+	palindromes := []string{}
+	if len(words) == 0 {
+		return palindromes
+	}
+
+	for _, word := range words {
+		newWord := strings.ToLower(word)
+		for _, special := range specialChars {
+			newWord = strings.Replace(newWord, string(special), "", -1)
+		}
+		if IsPalindrome(newWord) {
+			palindromes = append(palindromes, word)
+		}
+	}
+
+	return palindromes
+}
+
 // 21 Compute the average of all even non-negative numbers, rounded down.
 // Test cases:
 //   []int{2, 4, -1, -3, 6, 7} => 4
-//   []int{1, 3, 5, -2} => "no even values"
-//   []int{} => "no even values"
-//   []int{-10, -20, -30} => "no even values"
+//   []int{1, 3, 5, -2} => "no even or/and positive values"
+//   []int{} => "no even or/and positive values"
+//   []int{-10, -20, -30} => "no even or/and positive values"
 //   []int{10, 20, 30} => 20
+
+// 1. iz slicea integerjev "numbers" razberi ven vsa pozitivna liha števila in jih dodaj v slice "evenPositive"
+// 2. seštej vsoto vseh integerjev v "evenPositive"
+// 3. vsoto razdeli z indeksom slicea "numbers" in rezultat vrni kot integer, ki bo zaokrožen navzdol.
+
+func AverageOfEvenNonnegativeNums(numbers []int) (int, error) {
+	errInvalid := fmt.Errorf("no even or/and positive values")
+	if len(numbers) == 0 {
+		return 0, errInvalid
+	}
+
+	evenPositive := []int{}
+
+	for _, number := range numbers {
+		if number%2 == 0 && number > 0 {
+			evenPositive = append(evenPositive, number)
+		}
+	}
+
+	if len(evenPositive) == 0 {
+		return 0, errInvalid
+	}
+
+	sum := 0
+	indx := 0
+
+	for _, num := range evenPositive {
+		sum += num
+		indx += 1
+	}
+
+	return sum / indx, nil
+}
 
 // 22 Return the longest string that starts and ends with the same letter (case-insensitive).
 // Test cases:
@@ -835,6 +894,45 @@ func SumOfPrimeNumsNotRepeating(numbers []int) (int, error) {
 //   []string{} => "no valid word found"
 //   []string{"level", "stats", "bob"} => "stats"
 //   []string{"wow", "deed", "deed"} => "deed"
+
+//  V funkciji naredi loop, ki bo iz slicea stringov "words" za vsak string posebej in:
+//  * preštel število characterjev v stringu "word"
+//  * primerjal, če sta prvi in zadnji character v stringu "word" enaka
+//  * si zapomnil zadnji najdaljši string (ki ustreza vsem pogojem) kot "longestString".
+//  Funkcija naj vrne "longestString"
+
+func LongestStringFirstAndLastCharacterSame(words []string) (string, error) {
+	errInvalid := fmt.Errorf("no valid word found")
+	if len(words) == 0 {
+		return "", errInvalid
+	}
+	biggestIndx := 0
+	longestString := ""
+	for _, word := range words {
+		if len(word) == 0 {
+			continue
+		}
+		indx := 0
+		lastLetter := ""
+		for _, letter := range word {
+			indx += 1
+			lastLetter = string(letter)
+		}
+		crke := strings.Split(word, "")
+		if crke[0] == lastLetter {
+			if indx >= biggestIndx {
+				biggestIndx = indx
+				longestString = word
+			}
+		}
+
+	}
+	if longestString == "" {
+		return "", errInvalid
+	}
+
+	return longestString, nil
+}
 
 // 23 Filter out all numbers less than or equal to 10.
 // Find the smallest and largest of the remaining numbers.
