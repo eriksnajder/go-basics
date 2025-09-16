@@ -3,6 +3,8 @@ package naloge
 import (
 	"fmt"
 	"math"
+	"strconv"
+	"strings"
 )
 
 // 01 Return the smallest even number that appears more than once
@@ -619,8 +621,56 @@ func TwoMostFrequentNumbersDivByFour(numbers []int) (int, error) {
 //   []string{"123", "112", "789", "56"} => "56"
 //   []string{"abc", "999", "111"} => "no valid string found"
 //   []string{} => "no valid string found"
-//   []string{"9876", "1234", "88"} => "88"
+//   []string{"9876", "1234", "88"} => "1234" ?????????
 //   []string{"9", "98", "987"} => "9"
+
+// 1. naredi map "frequencies", ki bo vseboval stringe iz sliceov "numbers" in bo podal 'key(string):value(dolzina stringa)'
+// 2. preveri ali so elementi v stringu števila
+// 3. preveri, kateri je najkrajši in nima ponavljajočih elementov.
+// 4. funkcija naj vrne string(key) "number" ali 'error'
+
+func ShortestStringNoRepeatingCharacters(numbers []string) (string, error) {
+	errInvalid := fmt.Errorf("no valid string found")
+	if len(numbers) == 0 {
+		return "", errInvalid
+	}
+
+	shortest := ""
+
+	for _, s := range numbers {
+		isNumeric := true
+		repeating := false
+		frequencies := map[int]int{}
+
+		for _, char := range s {
+			currentNum, err := strconv.Atoi(string(char))
+			if err != nil {
+				isNumeric = false
+				break
+			}
+
+			frequencies[currentNum]++
+			if frequencies[currentNum] > 1 {
+				repeating = true
+				break
+			}
+		}
+
+		if !isNumeric || repeating {
+			continue
+		}
+
+		if len(shortest) == 0 || len(s) <= len(shortest) {
+			shortest = s
+		}
+	}
+
+	if len(shortest) > 0 {
+		return shortest, nil
+	}
+
+	return "", errInvalid
+}
 
 // 15 From a list of numbers, return the average of all values that:
 // Test cases:
@@ -632,11 +682,46 @@ func TwoMostFrequentNumbersDivByFour(numbers []int) (int, error) {
 
 // 16 Count how many groups of consecutive odd numbers sum to an even number
 // Test cases:
-//   []int{1, 3, 5, 2, 7, 9, 11} => 2      // [1 3 5] = 9 (odd), [7 9 11] = 27 (odd), skip; no even
-//   []int{1, 3, 2, 5, 7, 2, 9, 11} => 1   // [5 7] = 12 (even)
+//   []int{1, 3, 5, 2, 7, 9, 11} => 0      // [1 3 5] = 9 (odd), [7 9 11] = 27 (odd), skip; no even
+//   []int{1, 3, 2, 5, 7, 2, 9, 11} => 3   // [5 7] = 12 (even)
 //   []int{} => 0
 //   []int{2, 4, 6} => 0
-//   []int{1, 3, 5, 7} => 0
+//   []int{1, 3, 5, 7} => 1
+
+// 1. preverjaj skozi slice 'numbers' in seštevaj vsoto števil, dokler ne naletiš na sodo število.
+// 2. ko prideš do sodega, preveri če je vsota liho ali sodo število.
+// 3. če je sodo, prištej v 'consGroups += 1', če ne, continue.
+// 4. preden začneš preverjati naslednja števila v 'numbers', spravi vsoto na 0 in ponovi.
+
+func GroupsOfEvenSumsOfConsecutiveOddNums(numbers []int) int {
+	if len(numbers) == 0 {
+		return 0
+	}
+
+	sum := 0
+	consGroups := 0
+
+	for _, number := range numbers {
+		if number%2 != 0 {
+			sum += number
+		} else {
+			if sum == 0 {
+				continue
+			} else if sum%2 == 0 {
+				consGroups += 1
+				sum = 0
+			} else {
+				sum = 0
+			}
+		}
+	}
+
+	if sum%2 == 0 && sum != 0 {
+		consGroups += 1
+	}
+
+	return consGroups
+}
 
 // 17 From a slice of strings, return the most common word after lowercasing and removing punctuation
 // Test cases:
@@ -646,21 +731,87 @@ func TwoMostFrequentNumbersDivByFour(numbers []int) (int, error) {
 //   ["One", "Two", "Two", "Three."] => "two"
 //   ["What's", "what's", "Whats"] => "whats"
 
-// 18 From a slice of strings, return true if reversing all words and sorting gives the same as sorting and then reversing all
+func MostCommonWordLowered(words []string) (string, error) {
+	specialChars := "!.,?;:=<>'*"
+	errInvalid := fmt.Errorf("no input provided")
+
+	if len(words) == 0 {
+		return "", errInvalid
+	}
+
+	z := 0
+	mostCommonWord := ""
+	frequencies := map[string]int{}
+
+	for _, word := range words {
+		s := strings.ToLower(word)
+		for _, special := range specialChars {
+			s = strings.Replace(s, string(special), "", -1)
+		}
+
+		frequencies[s]++
+	}
+
+	for word, frequency := range frequencies {
+		if frequency > z {
+			mostCommonWord = word
+			z = frequency
+		}
+
+	}
+
+	return mostCommonWord, nil
+}
+
+// 18. Given a slice of strings, check if these two results are the same:
+//
+// 1) Reverse every word, then sort the list.
+// 2) Sort the list first, then reverse every word.
+//
+// Return true if both results are identical, otherwise false.
+//
 // Test cases:
 //   ["abc", "def"] => true
 //   ["abc", "cba"] => false
-//   [] => true
+//   []              => true
 //   ["a", "b", "c"] => true
-//   ["xy", "yx"] => false
+//   ["xy", "yx"]    => false
 
-// 19 Given a list of integers, return the sum of values that:
+// 19. Given a list of integers, return the sum of all values that are prime
+// and occur exactly once in the list.
+//
+// If no such values exist, return "no qualifying values".
+//
 // Test cases:
-//   []int{2, 3, 5, 5, 7, 10} => 10
-//   []int{4, 6, 8, 10} => "no qualifying values"
-//   []int{} => "no qualifying values"
-//   []int{13, 15, 17, 13} => 17
-//   []int{1, 2, 3, 4} => "no qualifying values"
+//   []int{2, 3, 5, 5, 7, 10} => 12      // 2 + 3 + 7
+//   []int{4, 6, 8, 10}       => "no qualifying values"
+//   []int{}                  => "no qualifying values"
+//   []int{13, 15, 17, 13}    => 17      // 17 only
+//   []int{1, 2, 3, 4}
+
+func SumOfPrimeNumsNotRepeating(numbers []int) (int, error) {
+	errInvalid := fmt.Errorf("no qualifying values")
+	if len(numbers) == 0 {
+		return 0, errInvalid
+	}
+
+	frequencies := map[int]int{}
+	sum := 0
+
+	for _, number := range numbers {
+		if isPrime(number) {
+			frequencies[number]++
+		}
+	}
+
+	for number, frequency := range frequencies {
+		if frequency == 1 {
+			sum += number
+		}
+	}
+
+	return sum, nil
+}
 
 // 20 From a list of strings, return all that are palindromes after removing non-letter characters and lowercasing
 // Test cases:
@@ -670,13 +821,72 @@ func TwoMostFrequentNumbersDivByFour(numbers []int) (int, error) {
 //   ["No 'x' in Nixon"] => ["No 'x' in Nixon"]
 //   ["Madam!", "madam", "MaDaM"] => ["Madam!", "madam", "MaDaM"]
 
+//  Naredi funkcijo, ki bo iz slicea stringov "words" preuredila stringe "word", da bodo brez vseh znakov, presledkov,
+// in velikih začetnic.
+// 1. najprej poberi iz stringov vse non-letter elemente in naredi iz nje nov string "newWord"
+// 2. nato jo preveri, če je palindrom (iz leve in desne prebrano ista beseda)
+// 3. če isPalindrome, dodaj prvotni string v nov slice "palindromes", ki naj ga funkcija vrne kot rezultat.
+
+func IsStringPalindrome(words []string) []string {
+	specialChars := " !.,?;:=<>'*"
+	palindromes := []string{}
+	if len(words) == 0 {
+		return palindromes
+	}
+
+	for _, word := range words {
+		newWord := strings.ToLower(word)
+		for _, special := range specialChars {
+			newWord = strings.Replace(newWord, string(special), "", -1)
+		}
+		if IsPalindrome(newWord) {
+			palindromes = append(palindromes, word)
+		}
+	}
+
+	return palindromes
+}
+
 // 21 Compute the average of all even non-negative numbers, rounded down.
 // Test cases:
 //   []int{2, 4, -1, -3, 6, 7} => 4
-//   []int{1, 3, 5, -2} => "no even values"
-//   []int{} => "no even values"
-//   []int{-10, -20, -30} => "no even values"
+//   []int{1, 3, 5, -2} => "no even or/and positive values"
+//   []int{} => "no even or/and positive values"
+//   []int{-10, -20, -30} => "no even or/and positive values"
 //   []int{10, 20, 30} => 20
+
+// 1. iz slicea integerjev "numbers" razberi ven vsa pozitivna liha števila in jih dodaj v slice "evenPositive"
+// 2. seštej vsoto vseh integerjev v "evenPositive"
+// 3. vsoto razdeli z indeksom slicea "numbers" in rezultat vrni kot integer, ki bo zaokrožen navzdol.
+
+func AverageOfEvenNonnegativeNums(numbers []int) (int, error) {
+	errInvalid := fmt.Errorf("no even or/and positive values")
+	if len(numbers) == 0 {
+		return 0, errInvalid
+	}
+
+	evenPositive := []int{}
+
+	for _, number := range numbers {
+		if number%2 == 0 && number > 0 {
+			evenPositive = append(evenPositive, number)
+		}
+	}
+
+	if len(evenPositive) == 0 {
+		return 0, errInvalid
+	}
+
+	sum := 0
+	indx := 0
+
+	for _, num := range evenPositive {
+		sum += num
+		indx += 1
+	}
+
+	return sum / indx, nil
+}
 
 // 22 Return the longest string that starts and ends with the same letter (case-insensitive).
 // Test cases:
@@ -686,6 +896,45 @@ func TwoMostFrequentNumbersDivByFour(numbers []int) (int, error) {
 //   []string{"level", "stats", "bob"} => "stats"
 //   []string{"wow", "deed", "deed"} => "deed"
 
+//  V funkciji naredi loop, ki bo iz slicea stringov "words" za vsak string posebej in:
+//  * preštel število characterjev v stringu "word"
+//  * primerjal, če sta prvi in zadnji character v stringu "word" enaka
+//  * si zapomnil zadnji najdaljši string (ki ustreza vsem pogojem) kot "longestString".
+//  Funkcija naj vrne "longestString"
+
+func LongestStringFirstAndLastCharacterSame(words []string) (string, error) {
+	errInvalid := fmt.Errorf("no valid word found")
+	if len(words) == 0 {
+		return "", errInvalid
+	}
+	biggestIndx := 0
+	longestString := ""
+	for _, word := range words {
+		if len(word) == 0 {
+			continue
+		}
+		indx := 0
+		lastLetter := ""
+		for _, letter := range word {
+			indx += 1
+			lastLetter = string(letter)
+		}
+		crke := strings.Split(word, "")
+		if crke[0] == lastLetter {
+			if indx >= biggestIndx {
+				biggestIndx = indx
+				longestString = word
+			}
+		}
+
+	}
+	if longestString == "" {
+		return "", errInvalid
+	}
+
+	return longestString, nil
+}
+
 // 23 Filter out all numbers less than or equal to 10.
 // Find the smallest and largest of the remaining numbers.
 // Count how many of the original numbers are strictly between those two.
@@ -693,8 +942,55 @@ func TwoMostFrequentNumbersDivByFour(numbers []int) (int, error) {
 //   []int{5, 12, 15, 20, 25} => 2
 //   []int{5, 8, 9} => "not enough values"
 //   []int{11, 11, 11} => "not enough values"
-//   []int{10, 20, 30} => 1
-//   []int{50, 100, 70, 85} => 1
+//   []int{10, 20, 30} => 0
+//   []int{50, 100, 70, 85} => 0
+
+func NumsBetweenSmallestAndLargest(numbers []int) (int, error) {
+	errInvalid := fmt.Errorf("not enough values")
+	newNumbers := []int{}
+
+	if len(numbers) == 0 {
+		return 0, errInvalid
+	}
+
+	smallest := 0
+	largest := 0
+	smallestNum := numbers[0]
+	largestNum := numbers[0]
+
+	for _, number := range numbers {
+		if number <= 10 {
+			continue
+		}
+		newNumbers = append(newNumbers, number)
+	}
+
+	if len(newNumbers) <= 1 {
+		return 0, errInvalid
+	}
+
+	for i, number := range newNumbers {
+		if number < smallestNum {
+			smallest = i
+			smallestNum = number
+		}
+	}
+
+	for i, number := range newNumbers {
+		if number > largestNum {
+			largest = i
+			largestNum = number
+		}
+	}
+
+	if largestNum == smallestNum {
+		return 0, errInvalid
+	}
+
+	distance := (largest - smallest) - 1
+
+	return distance, nil
+}
 
 // 24 Return a list of strings that appear only once sorted by length.
 // Test cases:

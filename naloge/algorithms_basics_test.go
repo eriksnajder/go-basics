@@ -593,3 +593,345 @@ func TestTwoMostFrequentNumbersDivByFour(t *testing.T) {
 		})
 	}
 }
+
+func TestShortestStringNoRepeatingCharacters(t *testing.T) {
+	tests := map[string]struct {
+		input       []string
+		expected    string
+		errExpected error
+	}{
+		"happy path": {
+			input:    []string{"123", "112", "789", "56"},
+			expected: "56",
+		},
+		"letters/repeating in slice": {
+			input:       []string{"abc", "999", "111"},
+			errExpected: fmt.Errorf("no valid string found"),
+		},
+		"empty slice": {
+			input:       []string{},
+			errExpected: fmt.Errorf("no valid string found"),
+		},
+		"the weird one": {
+			input:    []string{"9876", "1234", "88"},
+			expected: "1234",
+		},
+		"single elem result": {
+			input:    []string{"9", "98", "987"},
+			expected: "9",
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := ShortestStringNoRepeatingCharacters(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestGroupsOfEvenSumsOfConsecutiveOddNums(t *testing.T) {
+	tests := map[string]struct {
+		input    []int
+		expected int
+	}{
+		"unhappy path": {
+			input:    []int{1, 3, 5, 2, 7, 9, 11},
+			expected: 0,
+		},
+		"happy path": {
+			input:    []int{1, 3, 2, 5, 7, 2, 9, 11},
+			expected: 3,
+		},
+		"no odd number path": {
+			input:    []int{2, 4, 6},
+			expected: 0,
+		},
+		"one group path": {
+			input:    []int{1, 3, 5, 7},
+			expected: 1,
+		},
+		"empty input": {
+			input:    []int{},
+			expected: 0,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual := GroupsOfEvenSumsOfConsecutiveOddNums(test.input)
+
+			assert.Equal(t, test.expected, actual)
+		})
+
+	}
+}
+
+func TestMostCommonWordLowered(t *testing.T) {
+	tests := map[string]struct {
+		input       []string
+		expected    string
+		errExpected error
+	}{
+		"succes hello": {
+			input:    []string{"Hello!", "hello", "HELLO.", "Hi"},
+			expected: "hello",
+		},
+		"succes yes": {
+			input:    []string{"Yes?", "yes!", "YES", "no"},
+			expected: "yes",
+		},
+		"empty slice": {
+			input:       []string{},
+			errExpected: fmt.Errorf("no input provided"),
+		},
+		"three diff words": {
+			input:    []string{"One", "Two", "Two", "Three."},
+			expected: "two",
+		},
+		"single repeated word": {
+			input:    []string{"What's", "what's", "Whats"},
+			expected: "whats",
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := MostCommonWordLowered(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestSumOfPrimeNumsNotRepeating(t *testing.T) {
+	tests := map[string]struct {
+		input       []int
+		expected    int
+		errExpected error
+	}{
+		"succes": {
+			input:    []int{2, 3, 5, 5, 7, 10},
+			expected: 12,
+		},
+		"no prime numbers": {
+			input:       []int{4, 6, 8, 10},
+			errExpected: fmt.Errorf("no qualifying values"),
+		},
+		"empty slice": {
+			input:       []int{},
+			errExpected: fmt.Errorf("no qualifying values"),
+		},
+		"only one correct number": {
+			input:    []int{13, 15, 17, 13},
+			expected: 17,
+		},
+		"not enough matching values": {
+			input:    []int{1, 2, 3, 4},
+			expected: 5,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := SumOfPrimeNumsNotRepeating(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestIsStringPalindrome(t *testing.T) {
+	tests := map[string]struct {
+		input    []string
+		expected []string
+	}{
+		"succes ": {
+			input:    []string{"A man, a plan, a canal: Panama", "Racecar", "hello"},
+			expected: []string{"A man, a plan, a canal: Panama", "Racecar"},
+		},
+		"unhappy path": {
+			input:    []string{"abc", "def"},
+			expected: []string{},
+		},
+		"single string complex succes": {
+			input:    []string{"No 'x' in Nixon"},
+			expected: []string{"No 'x' in Nixon"},
+		},
+		"all strings palindromes & same on newWord": {
+			input:    []string{"Madam!", "madam", "MaDaM"},
+			expected: []string{"Madam!", "madam", "MaDaM"},
+		},
+		"empty input": {
+			input:    []string{},
+			expected: []string{},
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual := IsStringPalindrome(test.input)
+
+			assert.Equal(t, test.expected, actual)
+		})
+
+	}
+}
+
+func TestAverageOfEvenNonnegativeNums(t *testing.T) {
+	tests := map[string]struct {
+		input       []int
+		expected    int
+		errExpected error
+	}{
+		"succes regular": {
+			input:    []int{2, 4, -1, -3, 6, 7},
+			expected: 4,
+		},
+		"no even & positive numbers": {
+			input:       []int{1, 3, 5, -2},
+			errExpected: fmt.Errorf("no even or/and positive values"),
+		},
+		"empty slice": {
+			input:       []int{},
+			errExpected: fmt.Errorf("no even or/and positive values"),
+		},
+		"only one correct number": {
+			input:       []int{-10, -20, -30},
+			errExpected: fmt.Errorf("no even or/and positive values"),
+		},
+		"not enough matching values": {
+			input:    []int{10, 20, 30},
+			expected: 20,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := AverageOfEvenNonnegativeNums(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestLongestStringFirstAndLastCharacterSame(t *testing.T) {
+	tests := map[string]struct {
+		input       []string
+		expected    string
+		errExpected error
+	}{
+		"succes racecar": {
+			input:    []string{"Anna", "civic", "", "racecar", "apple"},
+			expected: "racecar",
+		},
+		"empty strings failure": {
+			input:       []string{"", "", ""},
+			errExpected: fmt.Errorf("no valid word found"),
+		},
+		"empty slice": {
+			input:       []string{},
+			errExpected: fmt.Errorf("no valid word found"),
+		},
+		"succes two longest words": {
+			input:    []string{"level", "stats", "bob"},
+			expected: "stats",
+		},
+		"succes repeated word": {
+			input:    []string{"wow", "deed", "deed"},
+			expected: "deed",
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := LongestStringFirstAndLastCharacterSame(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
+
+func TestNumsBetweenSmallestAndLargest(t *testing.T) {
+	tests := map[string]struct {
+		input       []int
+		expected    int
+		errExpected error
+	}{
+		"succes regular": {
+			input:    []int{5, 12, 15, 20, 25},
+			expected: 2,
+		},
+		"numbers < 10": {
+			input:       []int{5, 8, 9},
+			errExpected: fmt.Errorf("not enough values"),
+		},
+		"empty slice": {
+			input:       []int{},
+			errExpected: fmt.Errorf("not enough values"),
+		},
+		"all same numbers": {
+			input:       []int{11, 11, 11},
+			errExpected: fmt.Errorf("not enough values"),
+		},
+		"smallest and largest neighbours 1": {
+			input:    []int{10, 20, 30},
+			expected: 0,
+		},
+		"smallest and largest neighbours 2": {
+			input:    []int{50, 100, 70, 85},
+			expected: 0,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := NumsBetweenSmallestAndLargest(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}

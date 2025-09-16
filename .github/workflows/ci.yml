@@ -1,0 +1,62 @@
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-lint-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: ["1.24.x"] # keep 2 latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache: true  # caches $GOMODCACHE automatically
+
+      - name: Module tidy (check)
+        run: |
+          go mod tidy
+          git diff --exit-code go.mod go.sum
+
+      - name: Build (quick sanity)
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Format (enforce gofmt)
+        run: |
+          if [ -n "$(gofmt -l .)" ]; then
+            echo "The following files are not formatted:"
+            gofmt -l .
+            exit 1
+          fi
+
+      - name: Lint (golangci-lint)
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64.8
+          args: --timeout=5m
+          only-new-issues: true
+
+      - name: Test (race)
+        run: |
+          mkdir -p .artifacts
+          go test ./... -race 
+
+   

@@ -1,0 +1,33 @@
+# .golangci.yml
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    - govet
+    - errcheck
+    - gosimple
+    - staticcheck
+    - ineffassign
+    - typecheck
+    - unused
+    - misspell
+    - gofmt
+    - revive
+
+issues:
+  exclude-use-default: false
+  # Example: ignore generated files
+  exclude-rules:
+    - path: _generated\.go
+      linters: [ "gofmt", "revive", "staticcheck" ]
+
+linters-settings:
+  revive:
+    severity: warning
+    rules:
+      - name: indent-error-flow
+      - name: errorf
+      - name: blank-imports
+      - name: empty-block
