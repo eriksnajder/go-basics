@@ -718,11 +718,8 @@ func GroupsOfEvenSumsOfConsecutiveOddNums(numbers []int) int {
 
 	if sum%2 == 0 && sum != 0 {
 		consGroups += 1
-		sum = 0
-	} else {
-		sum = 0
 	}
-
+	sum = 0
 	return consGroups
 }
 
