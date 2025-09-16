@@ -659,6 +659,7 @@ func ShortestStringNoRepeatingCharacters(numbers []string) (string, error) {
 		if !isNumeric || repeating {
 			continue
 		}
+
 		if len(shortest) == 0 || len(s) <= len(shortest) {
 			shortest = s
 		}
@@ -713,8 +714,8 @@ func GroupsOfEvenSumsOfConsecutiveOddNums(numbers []int) int {
 				sum = 0
 			}
 		}
-
 	}
+
 	if sum%2 == 0 && sum != 0 {
 		consGroups += 1
 		sum = 0
@@ -736,6 +737,7 @@ func GroupsOfEvenSumsOfConsecutiveOddNums(numbers []int) int {
 func MostCommonWordLowered(words []string) (string, error) {
 	specialChars := "!.,?;:=<>'*"
 	errInvalid := fmt.Errorf("no input provided")
+
 	if len(words) == 0 {
 		return "", errInvalid
 	}
@@ -743,6 +745,7 @@ func MostCommonWordLowered(words []string) (string, error) {
 	z := 0
 	mostCommonWord := ""
 	frequencies := map[string]int{}
+
 	for _, word := range words {
 		s := strings.ToLower(word)
 		for _, special := range specialChars {
@@ -751,6 +754,7 @@ func MostCommonWordLowered(words []string) (string, error) {
 
 		frequencies[s]++
 	}
+
 	for word, frequency := range frequencies {
 		if frequency > z {
 			mostCommonWord = word
@@ -943,6 +947,10 @@ func LongestStringFirstAndLastCharacterSame(words []string) (string, error) {
 //   []int{11, 11, 11} => "not enough values"
 //   []int{10, 20, 30} => 1
 //   []int{50, 100, 70, 85} => 1
+
+func NumsBetweenSmallestAndLargest(numbers []int) (int, error) {
+
+}
 
 // 24 Return a list of strings that appear only once sorted by length.
 // Test cases:
