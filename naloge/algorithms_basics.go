@@ -945,11 +945,54 @@ func LongestStringFirstAndLastCharacterSame(words []string) (string, error) {
 //   []int{5, 12, 15, 20, 25} => 2
 //   []int{5, 8, 9} => "not enough values"
 //   []int{11, 11, 11} => "not enough values"
-//   []int{10, 20, 30} => 1
-//   []int{50, 100, 70, 85} => 1
+//   []int{10, 20, 30} => 0
+//   []int{50, 100, 70, 85} => 0
 
 func NumsBetweenSmallestAndLargest(numbers []int) (int, error) {
+	errInvalid := fmt.Errorf("not enough values")
+	newNumbers := []int{}
 
+	if len(numbers) == 0 {
+		return 0, errInvalid
+	}
+
+	smallest := 0
+	largest := 0
+	smallestNum := numbers[0]
+	largestNum := numbers[0]
+
+	for _, number := range numbers {
+		if number <= 10 {
+			continue
+		}
+		newNumbers = append(newNumbers, number)
+	}
+
+	if len(newNumbers) <= 1 {
+		return 0, errInvalid
+	}
+
+	for i, number := range newNumbers {
+		if number < smallestNum {
+			smallest = i
+			smallestNum = number
+		}
+	}
+
+	for i, number := range newNumbers {
+		if number > largestNum {
+			largest = i
+			largestNum = number
+		}
+	}
+
+	if largestNum == smallestNum {
+		return 0, errInvalid
+	}
+
+	distance := (largest - smallest) - 1
+
+	return distance, nil
 }
 
 // 24 Return a list of strings that appear only once sorted by length.

@@ -887,3 +887,51 @@ func TestLongestStringFirstAndLastCharacterSame(t *testing.T) {
 		})
 	}
 }
+
+func TestNumsBetweenSmallestAndLargest(t *testing.T) {
+	tests := map[string]struct {
+		input       []int
+		expected    int
+		errExpected error
+	}{
+		"succes regular": {
+			input:    []int{5, 12, 15, 20, 25},
+			expected: 2,
+		},
+		"numbers < 10": {
+			input:       []int{5, 8, 9},
+			errExpected: fmt.Errorf("not enough values"),
+		},
+		"empty slice": {
+			input:       []int{},
+			errExpected: fmt.Errorf("not enough values"),
+		},
+		"all same numbers": {
+			input:       []int{11, 11, 11},
+			errExpected: fmt.Errorf("not enough values"),
+		},
+		"smallest and largest neighbours 1": {
+			input:    []int{10, 20, 30},
+			expected: 0,
+		},
+		"smallest and largest neighbours 2": {
+			input:    []int{50, 100, 70, 85},
+			expected: 0,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			actual, err := NumsBetweenSmallestAndLargest(test.input)
+			if err != nil {
+				if test.errExpected != nil {
+					assert.ErrorContains(t, test.errExpected, err.Error())
+				} else {
+					assert.NoError(t, err)
+				}
+			} else {
+				assert.Equal(t, test.expected, actual)
+			}
+		})
+	}
+}
